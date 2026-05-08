@@ -1,59 +1,223 @@
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua"))()
 
--- Создаем GUI программно
-local player = Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "LoadingScreen"
-screenGui.IgnoreGuiInset = true -- Делаем во весь экран, игнорируя верхнюю панель
-screenGui.Parent = player:WaitForChild("PlayerGui")
+local Window = Library:CreateWindow({
+    Title = "Loops",
+    Footer = "Welcome to Genesis",
+    ToggleKeybind = "RightShift",
+    Size = UDim2.fromOffset(980, 720),
+    Theme = "Dark"
+})
 
--- Черный фон
-local background = Instance.new("Frame")
-background.Size = UDim2.new(1, 0, 1, 0)
-background.BackgroundColor3 = Color3.new(0, 0, 0)
-background.BorderSizePixel = 0
-background.Parent = screenGui
+-- SIDEBAR TABS (КАК НА КАРТИНКЕ)
 
--- Текст Updating
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 1, 0)
-textLabel.BackgroundTransparency = 1
-textLabel.TextColor3 = Color3.new(1, 1, 1)
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 60
-textLabel.Text = "Updating"
-textLabel.Parent = background
+local Home = Window:AddTab("Loops", "home")
+local Plus = Window:AddTab("Plus", "plus")
+local Skull = Window:AddTab("Skull", "skull")
+local Hand = Window:AddTab("Hand", "hand")
+local User = Window:AddTab("User", "user")
+local Layers = Window:AddTab("Layers", "layers")
+local Grid = Window:AddTab("Grid", "grid")
+local Smile = Window:AddTab("Smile", "smile")
+local Keyboard = Window:AddTab("Keyboard", "keyboard")
+local Radar = Window:AddTab("Radar", "radar")
+local Settings = Window:AddTab("Settings", "settings")
 
--- Анимация точек
-task.spawn(function()
-    local dots = ""
-    local startTime = os.clock()
-    
-    while screenGui.Parent do
-        local elapsed = os.clock() - startTime
-        local count = math.floor(elapsed * 10) % 4 -- Быстрая смена (множитель 10)
-        
-        dots = string.rep(".", count)
-        textLabel.Text = "Updating" .. dots
-        
-        RunService.RenderStepped:Wait()
-    end
-end)
+-- MAIN TAB
+local TargetSection = Home:AddSection("Target Interaction", "left")
 
--- Ждем 5 секунд и красиво выключаем
-task.delay(5, function()
-    local fadeInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    
-    -- Плавно скрываем текст и фон
-    local fadeTween = TweenService:Create(background, fadeInfo, {BackgroundTransparency = 1})
-    local textFadeTween = TweenService:Create(textLabel, fadeInfo, {TextTransparency = 1})
-    
-    fadeTween:Play()
-    textFadeTween:Play()
-    
-    fadeTween.Completed:Connect(function()
-        screenGui:Destroy()
-    end)
-end)
+TargetSection:AddDropdown({
+    Name = "select player for kick",
+    Options = {"NITRO", "Player1", "Player2"},
+    Default = "NITRO",
+    Callback = function() end
+})
+
+TargetSection:AddButton({
+    Name = "refresh player list",
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Fling ( grab )",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Ragdoll Snowball",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Grab Troll (spam grab)",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Loop Kick (grab + blob)",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Loop Kick",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Blob kill",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "kick fast (grab + blob, with height)",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Fling",
+    Default = false,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Target Tracer",
+    Default = true,
+    Callback = function() end
+})
+
+TargetSection:AddToggle({
+    Name = "Remove Anti Kick",
+    Default = true,
+    Callback = function() end
+})
+
+-- LOWER LEFT
+local KickLoop = Home:AddSection("kick grabs loop", "left")
+
+KickLoop:AddToggle({
+    Name = "Kick (spam grab)",
+    Default = true,
+    Callback = function() end
+})
+
+KickLoop:AddToggle({
+    Name = "Ragdoll Target",
+    Default = true,
+    Callback = function() end
+})
+
+KickLoop:AddToggle({
+    Name = "Kick (spam grab V2)",
+    Default = false,
+    Callback = function() end
+})
+
+-- RIGHT TOP
+local Blobman = Home:AddSection("Blobman Settings", "right")
+
+Blobman:AddToggle({
+    Name = "Auto Sit Blobman",
+    Default = false,
+    Callback = function() end
+})
+
+Blobman:AddSlider({
+    Name = "Blob Speed",
+    Min = 0,
+    Max = 100,
+    Default = 16,
+    Callback = function() end
+})
+
+Blobman:AddToggle({
+    Name = "Blob Speed",
+    Default = false,
+    Callback = function() end
+})
+
+-- RIGHT MIDDLE
+local Misc = Home:AddSection("Misc", "right")
+
+Misc:AddTextbox({
+    Name = "Custom Kick Height, for kick fast",
+    Default = "19",
+    PlaceholderText = "19",
+    Callback = function() end
+})
+
+Misc:AddToggle({
+    Name = "Destroy Gucci (sit)",
+    Default = false,
+    Callback = function() end
+})
+
+Misc:AddButton({
+    Name = "bring",
+    Callback = function() end
+})
+
+Misc:AddToggle({
+    Name = "Remove Anti Input Lag",
+    Default = false,
+    Callback = function() end
+})
+
+Misc:AddToggle({
+    Name = "Target Joined Notify",
+    Default = false,
+    Callback = function() end
+})
+
+-- RIGHT BOTTOM
+local White = Home:AddSection("whitelist", "right")
+
+White:AddDropdown({
+    Name = "whitelist people",
+    Options = {"---"},
+    Default = "---",
+    Callback = function() end
+})
+
+White:AddButton({
+    Name = "refresh List",
+    Callback = function() end
+})
+
+-- EMPTY TABS
+
+local function FillEmpty(tab)
+    local sec = tab:AddSection("Empty", "left")
+
+    sec:AddParagraph({
+        Title = "Placeholder",
+        Description = "No functions."
+    })
+
+    sec:AddToggle({
+        Name = "Example Toggle",
+        Default = false,
+        Callback = function() end
+    })
+
+    sec:AddButton({
+        Name = "Example Button",
+        Callback = function() end
+    })
+end
+
+FillEmpty(Plus)
+FillEmpty(Skull)
+FillEmpty(Hand)
+FillEmpty(User)
+FillEmpty(Layers)
+FillEmpty(Grid)
+FillEmpty(Smile)
+FillEmpty(Keyboard)
+FillEmpty(Radar)
+FillEmpty(Settings)
