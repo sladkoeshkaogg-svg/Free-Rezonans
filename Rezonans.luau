@@ -1,4 +1,4 @@
--- Resonanse V2.7 | FTAP
+-- Resonanse V2.7 | FTAP1111
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
 local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
