@@ -19,22 +19,23 @@ local targetNotifyConnections = {}
 local Window = Library:CreateWindow({
     Title = "Resonanse",
     Footer = "Project Resonanse V2.7 | FTAP",
-    Icon = "rbxassetid://13639308986",
-    SidebarIcon = "rbxassetid://13639308986",
+    Icon = 13639308986,
     NotifySide = "Right",
     ShowCustomCursor = true,
     EnableCompacting = true,
     SidebarCompacted = true,
-    CornerRadius = 15
+    CornerRadius = 15,
+    SearchbarSize = UDim2.fromScale(0.95, 1),
+    DisableSearch = false,
 })
 
 ThemeManager:SetLibrary(Library)
 ThemeManager:SetDefaultTheme({
     FontColor = Color3.fromRGB(255, 255, 255),
-    MainColor = Color3.fromRGB(255, 255, 0),
-    AccentColor = Color3.fromRGB(255, 255, 100),
-    BackgroundColor = Color3.fromRGB(0, 0, 0),
-    OutlineColor = Color3.fromRGB(255, 255, 0),
+    MainColor = Color3.fromRGB(25, 25, 0),
+    AccentColor = Color3.fromRGB(255, 215, 0),
+    BackgroundColor = Color3.fromRGB(10, 10, 10),
+    OutlineColor = Color3.fromRGB(255, 215, 0),
     FontFace = "BuilderSans",
 })
 
