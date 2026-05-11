@@ -17,7 +17,7 @@ local LocalPlayer = Players.LocalPlayer
 local targetNotifyConnections = {}
 
 local Window = Library:CreateWindow({
-    Title = "Resonanse",
+    Title = "13639308986",
     Footer = "Project Resonanse V2.7 | FTAP",
     SidebarIcon = "rbxassetid://13639308986",    NotifySide = "Right",
     ShowCustomCursor = true,
