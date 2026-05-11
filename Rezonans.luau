@@ -1,59 +1,49 @@
+-- POLAR HUB by Absolute_SEB
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+local Options = Library.Options
+local Toggles = Library.Toggles
+
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local targetNotifyConnections = {}
 
--- Создаем GUI программно
-local player = Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "LoadingScreen"
-screenGui.IgnoreGuiInset = true -- Делаем во весь экран, игнорируя верхнюю панель
-screenGui.Parent = player:WaitForChild("PlayerGui")
+local Window = Library:CreateWindow({
+    Title = "Resonanse",
+    Footer = "Project Resonanse V2.7 | FTAP",
+    Icon = "rbxassetid://13639308986",
+    NotifySide = "Right",
+    ShowCustomCursor = true,
+	EnableCompacting = true,
+	SidebarCompacted = true,
+	CornerRadius = 10
+})
 
--- Черный фон
-local background = Instance.new("Frame")
-background.Size = UDim2.new(1, 0, 1, 0)
-background.BackgroundColor3 = Color3.new(0, 0, 0)
-background.BorderSizePixel = 0
-background.Parent = screenGui
+ThemeManager:SetLibrary(Library)
+ThemeManager:SetDefaultTheme({
+    FontColor = Color3.fromRGB(245, 245, 245),
+    MainColor = Color3.fromRGB(14, 14, 16),
+    AccentColor = Color3.fromRGB(255, 190, 0),
+    BackgroundColor = Color3.fromRGB(8, 8, 10),
+    OutlineColor = Color3.fromRGB(85, 75, 30),
+    FontFace = "BuilderSans",
+})
 
--- Текст Updating
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 1, 0)
-textLabel.BackgroundTransparency = 1
-textLabel.TextColor3 = Color3.new(1, 1, 1)
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 60
-textLabel.Text = "Updating"
-textLabel.Parent = background
-
--- Анимация точек
-task.spawn(function()
-    local dots = ""
-    local startTime = os.clock()
-    
-    while screenGui.Parent do
-        local elapsed = os.clock() - startTime
-        local count = math.floor(elapsed * 10) % 4 -- Быстрая смена (множитель 10)
-        
-        dots = string.rep(".", count)
-        textLabel.Text = "Updating" .. dots
-        
-        RunService.RenderStepped:Wait()
-    end
-end)
-
--- Ждем 5 секунд и красиво выключаем
-task.delay(5, function()
-    local fadeInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    
-    -- Плавно скрываем текст и фон
-    local fadeTween = TweenService:Create(background, fadeInfo, {BackgroundTransparency = 1})
-    local textFadeTween = TweenService:Create(textLabel, fadeInfo, {TextTransparency = 1})
-    
-    fadeTween:Play()
-    textFadeTween:Play()
-    
-    fadeTween.Completed:Connect(function()
-        screenGui:Destroy()
-    end)
-end)
+local Tabs = {
+    Defence = Window:AddTab("Defence", "home"),
+    Visuals = Window:AddTab("Visuals", "human"),
+    Server = Window:AddTab("Server", "server"),
+    Grabs = Window:AddTab("Grabs", "palette"),
+    Security = Window:AddTab("Security", "shield"),
+    Target = Window:AddTab("Target", "target"),
+    Blobmen = Window:AddTab("Blobmen", "robot"),
+    UISettings = Window:AddTab("UI Settings", "toys"),
+}
