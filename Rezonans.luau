@@ -29,11 +29,7 @@ local Window = Library:CreateWindow({
 
 ThemeManager:SetLibrary(Library)
 ThemeManager:SetDefaultTheme({
-    FontColor = Color3.fromRGB(245, 245, 245),
-    MainColor = Color3.fromRGB(50, 50, 0),
     AccentColor = Color3.fromRGB(255, 215, 0),
-    BackgroundColor = Color3.fromRGB(10, 10, 10),
-    OutlineColor = Color3.fromRGB(128, 128, 128),
     FontFace = "BuilderSans",
 })
 
