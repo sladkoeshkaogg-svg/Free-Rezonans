@@ -38,7 +38,7 @@ ThemeManager:SetDefaultTheme({
 })
 
 local Tabs = {
-    Defence = Window:AddTab("Defence", "home"),
+    Defence = Window:AddTab("Defence", "house"),
     Visuals = Window:AddTab("Visuals", "human"),
     Grabs = Window:AddTab("Grabs", "hand"),
     Security = Window:AddTab("Security", "shield"),
