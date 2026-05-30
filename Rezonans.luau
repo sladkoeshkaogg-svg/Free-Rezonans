@@ -1,4 +1,4 @@
--- Rezonans Crack By:magfun_legend
+-- Resonans Crack By:magfun_legend
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
 local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
@@ -19,7 +19,7 @@ local targetNotifyConnections = {}
 local Window = Library:CreateWindow({
     Title = "Resonans",
     Footer = "Project  Resonanse v2.7 | FTAP",
-    Icon = 120050296012939,
+    Icon = 13639308986,
     NotifySide = "Right",
     ShowCustomCursor = true,
 	EnableCompacting = true,
@@ -3906,8 +3906,8 @@ MenuGroup:AddDropdown("NotificationSide", {
 })
 
 MenuGroup:AddDropdown("DPIDropdown", {
-    Values = { "50%", "75%", "100%", "125%", "150%", "175%", "200%" },
-    Default = "100%",
+    Values = { "50%", "75%", "100%", "120%", "125%", "150%", "175%", "200%" },
+    Default = "120%",
     Text = "DPI Scale",
     Callback = function(Value)
         Value = Value:gsub("%%", "")
