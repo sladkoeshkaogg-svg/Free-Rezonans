@@ -35,62 +35,6 @@ ThemeManager:SetDefaultTheme({
     FontFace = "BuilderSans",
 })
 
--- Create a filled crescent (yellow) window icon so interior is filled
-task.defer(function()
-    local success, screen = pcall(function() return Library.ScreenGui end)
-    if not success or not screen then return end
-
-    local main = screen:FindFirstChild("Main")
-    if not main then return end
-    local content = main:FindFirstChild("Content")
-    if not content then return end
-    local topbar = content:FindFirstChild("TopBar")
-    if not topbar then return end
-    local titleHolder = topbar:FindFirstChild("TitleHolder")
-    if not titleHolder then return end
-
-    -- remove existing image icon if present
-    for _, child in pairs(titleHolder:GetChildren()) do
-        if child:IsA("ImageLabel") or child.Name == "CustomMoonIcon" then
-            child:Destroy()
-        end
-    end
-
-    local iconSize = UDim2.fromOffset(48, 48)
-
-    local iconFrame = Instance.new("Frame")
-    iconFrame.Name = "CustomMoonIcon"
-    iconFrame.Size = iconSize
-    iconFrame.BackgroundColor3 = Library.Scheme.AccentColor
-    iconFrame.BackgroundTransparency = 0
-    iconFrame.BorderSizePixel = 0
-    iconFrame.LayoutOrder = 0
-    iconFrame.Parent = titleHolder
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(1, 0)
-    corner.Parent = iconFrame
-
-    local cut = Instance.new("Frame")
-    cut.Name = "Cut"
-    cut.Size = UDim2.fromScale(0.68, 0.68)
-    cut.Position = UDim2.fromScale(0.33, 0.15)
-    cut.AnchorPoint = Vector2.new(0, 0)
-    cut.BackgroundColor3 = Library.Scheme.BackgroundColor
-    cut.BorderSizePixel = 0
-    cut.Parent = iconFrame
-
-    local cutCorner = Instance.new("UICorner")
-    cutCorner.CornerRadius = UDim.new(1, 0)
-    cutCorner.Parent = cut
-
-    -- Register colors so icon updates with theme changes
-    pcall(function()
-        Library:AddToRegistry(iconFrame, { BackgroundColor3 = "AccentColor" })
-        Library:AddToRegistry(cut, { BackgroundColor3 = "BackgroundColor" })
-    end)
-end)
-
 local Tabs = {
     Main = Window:AddTab("Main", "house"),
     Player = Window:AddTab("Player", "person-standing"),
