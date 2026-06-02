@@ -14,7 +14,7 @@ end
 local Funcs = Library:CreateWindow({
 	Title = "Mercury",
 	Theme = {
-		Main = Color3.fromRGB(12, 12, 12у),
+		Main = Color3.fromRGB(12, 12, 12),
 		Second = Color3.fromRGB(22, 22, 22),
 		Accent = Color3.fromRGB(220, 220, 220),
 		ElementAccent = Color3.fromRGB(220, 220, 220),
