@@ -17,7 +17,7 @@ local LocalPlayer = Players.LocalPlayer
 local targetNotifyConnections = {}
 
 local Window = Library:CreateWindow({
-    Title = "Ekonans",
+    Title = "Resonanse",
     Footer = "Project Resonance v2.8 | FTAP",
     Icon = 13639308918,
     NotifySide = "Right",
@@ -26,6 +26,13 @@ local Window = Library:CreateWindow({
 	SidebarCompacted = true,
 	SearchbarSize = UDim2.fromScale(0.45, 1),
 	CornerRadius = 30
+})
+
+ThemeManager:SetLibrary(Library)
+ThemeManager:SetDefaultTheme({
+    AccentColor = Color3.fromRGB(255, 215, 0),
+    OutlineColor = Color3.fromRGB(80, 80, 80),
+    FontFace = "BuilderSans",
 })
 
 local Tabs = {
