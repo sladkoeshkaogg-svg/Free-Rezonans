@@ -1,4 +1,4 @@
--- Resonans Crack By:magfun_legend3432424324324
+-- Ekonans
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
 local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
@@ -17,26 +17,19 @@ local LocalPlayer = Players.LocalPlayer
 local targetNotifyConnections = {}
 
 local Window = Library:CreateWindow({
-    Title = "Resonans",
-    Footer = "Project  Resonanse v2.7 | FTAP",
-    Icon = 343924788,
-    IconSize = 48,
+    Title = "Ekonans",
+    Footer = "Project Resonance v2.8 | FTAP",
+    Icon = 13639308918,
     NotifySide = "Right",
     ShowCustomCursor = true,
 	EnableCompacting = true,
 	SidebarCompacted = true,
-	CornerRadius = 15
-})
-
-ThemeManager:SetLibrary(Library)
-ThemeManager:SetDefaultTheme({
-    AccentColor = Color3.fromRGB(255, 215, 0),
-    OutlineColor = Color3.fromRGB(80, 80, 80),
-    FontFace = "BuilderSans",
+	SearchbarSize = UDim2.fromScale(0.45, 1),
+	CornerRadius = 30
 })
 
 local Tabs = {
-    Main = Window:AddTab("Main", "house"),
+    Home = Window:AddTab("Main", "house"),
     Player = Window:AddTab("Player", "person-standing"),
     Grabs = Window:AddTab("Grabs", "hand"),
     Defence = Window:AddTab("Defence", "shield"),
@@ -50,6 +43,215 @@ local Tabs = {
     Lists = Window:AddTab("Lists", "scroll"),
     UISettings = Window:AddTab("UI Settings", "settings"),
 }
+
+task.defer(function()
+    task.wait(0.15)
+    -- Найти поле поиска в UI и выровнять его по правому краю
+    if Library and Library.ScreenGui then
+        local activeLabel
+        for _, obj in pairs(Library.ScreenGui:GetDescendants()) do
+            if obj:IsA("TextBox") and obj.PlaceholderText == "Search" then
+                local parent = obj.Parent
+                if parent then
+                    local layout = parent:FindFirstChildOfClass("UIListLayout")
+                    if layout then
+                        pcall(function()
+                            layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+                        end)
+                    end
+                end
+
+                -- уменьшить ширину поля поиска, чтобы оно выглядело как в примере
+                pcall(function()
+                    obj.Size = UDim2.fromOffset(420, 36)
+                end)
+
+                -- Создать (или найти) метку активной вкладки рядом с полем поиска
+                if parent then
+                    activeLabel = parent:FindFirstChild("EkonansActiveTabLabel")
+                    if not activeLabel then
+                        activeLabel = Instance.new("TextLabel")
+                        activeLabel.Name = "EkonansActiveTabLabel"
+                        activeLabel.BackgroundTransparency = 1
+                        activeLabel.Size = UDim2.fromOffset(180, 36)
+                        activeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        activeLabel.TextScaled = false
+                        activeLabel.TextSize = 12
+                        activeLabel.Font = Enum.Font.SourceSansSemibold
+                        -- Таблица отображаемых имён вкладок (показывается в левой метке)
+                        local displayNames = {
+                            Home = "Home",
+                            Player = "Player",
+                            Grabs = "Grabs",
+                            Defence = "Defence",
+                            Target = "Target",
+                            Blobmen = "Blobmen",
+                            Toys = "Toys",
+                            Visuals = "Visuals",
+                            AutoClicker = "AutoClicker",
+                            Keyboard = "Keyboard",
+                            Miscs = "Miscs",
+                            Lists = "Lists",
+                            UISettings = "Ui Setting",
+                        }
+
+                        local function getDisplayName(key, tabObj)
+                            if key and displayNames[key] then
+                                return displayNames[key]
+                            end
+                            if tabObj and tabObj.Button and tabObj.Button.Text and tabObj.Button.Text ~= "" then
+                                return tabObj.Button.Text
+                            end
+                            return key or ""
+                        end
+
+                        -- Установить начальный текст метки в текущую активную вкладку
+                        local initialName = ""
+                        pcall(function()
+                            if Library and Library.ActiveTab then
+                                if type(Library.ActiveTab) == "string" then
+                                    initialName = getDisplayName(Library.ActiveTab, Tabs[Library.ActiveTab])
+                                elseif type(Library.ActiveTab) == "table" and Library.ActiveTab.Name then
+                                    initialName = getDisplayName(Library.ActiveTab.Name, Tabs[Library.ActiveTab.Name])
+                                end
+                            end
+                        end)
+
+                        if not initialName or initialName == "" then
+                            for name, tab in pairs(Tabs) do
+                                pcall(function()
+                                    if tab and tab.Container and tab.Container.Visible then
+                                        initialName = getDisplayName(name, tab)
+                                    end
+                                end)
+                                if initialName and initialName ~= "" then break end
+                            end
+                        end
+
+                        if not initialName or initialName == "" then
+                            for name, tab in pairs(Tabs) do
+                                pcall(function()
+                                    local tryName = getDisplayName(name, tab)
+                                    if tryName and tryName ~= "" then
+                                        initialName = tryName
+                                    end
+                                end)
+                                if initialName and initialName ~= "" then break end
+                            end
+                        end
+
+                        activeLabel.Text = initialName or ""
+                        activeLabel.Parent = parent
+                        pcall(function()
+                            -- попытка подвинуть метку перед полем поиска в порядке компоновки
+                            if obj.LayoutOrder then
+                                activeLabel.LayoutOrder = obj.LayoutOrder - 1
+                            end
+                        end)
+                        pcall(function()
+                            -- очистить явную метку "UI Setting", если она уже существует рядом
+                            for _, sib in pairs(parent:GetChildren()) do
+                                if sib ~= activeLabel and sib:IsA("TextLabel") then
+                                    pcall(function()
+                                        if sib.Text == "UI Setting" or sib.Text == "UI Settings" then
+                                            sib.Text = ""
+                                        end
+                                    end)
+                                end
+                            end
+                        end)
+                    end
+                end
+
+                -- Обернуть метод Show у вкладок, чтобы обновлять метку при переключении
+                pcall(function()
+                    for tabName, tabObj in pairs(Tabs) do
+                        if type(tabObj.Show) == "function" then
+                            local _orig = tabObj.Show
+                            local nameCopy = tabName
+                            tabObj.Show = function(self, ...)
+                                _orig(self, ...)
+                                local name = getDisplayName(nameCopy, tabObj)
+                                    if not name or name == "" then
+                                        pcall(function()
+                                            if self and self.Button and self.Button.Text and self.Button.Text ~= "" then
+                                                name = self.Button.Text
+                                            end
+                                        end)
+                                    end
+                                    if activeLabel and activeLabel.Parent then
+                                        activeLabel.Text = name
+                                    end
+                            end
+                        end
+                    end
+                end)
+
+                -- Подключить обновление метки при клике на кнопку вкладки (на случай, если Show не вызывается)
+                pcall(function()
+                    for tabName, tabObj in pairs(Tabs) do
+                        pcall(function()
+                            local btn = tabObj.Button
+                            local nameCopy = tabName
+                            local tabCopy = tabObj
+                            if btn and btn.MouseButton1Click then
+                                btn.MouseButton1Click:Connect(function()
+                                    if activeLabel and activeLabel.Parent then
+                                        local newText = getDisplayName(nameCopy, tabCopy)
+                                        if newText and newText ~= "" then
+                                            activeLabel.Text = newText
+                                        end
+                                    end
+                                end)
+                            end
+                        end)
+                    end
+                end)
+
+                -- Отложенная перепроверка начального состояния после того, как UI окончательно установится
+                pcall(function()
+                        task.delay(0.12, function()
+                        if not activeLabel or not activeLabel.Parent then return end
+                        local resolved = ""
+                        pcall(function()
+                            if Library and Library.ActiveTab then
+                                if type(Library.ActiveTab) == "string" then
+                                    resolved = getDisplayName(Library.ActiveTab, Tabs[Library.ActiveTab])
+                                elseif type(Library.ActiveTab) == "table" and Library.ActiveTab.Name then
+                                    resolved = getDisplayName(Library.ActiveTab.Name, Tabs[Library.ActiveTab.Name])
+                                end
+                            end
+                        end)
+                        if not resolved or resolved == "" then
+                            for name, t in pairs(Tabs) do
+                                pcall(function()
+                                    if t and t.Container and t.Container.Visible then
+                                        resolved = getDisplayName(name, t)
+                                    end
+                                end)
+                                if resolved and resolved ~= "" then break end
+                            end
+                        end
+                        if not resolved or resolved == "" then
+                            for name, t in pairs(Tabs) do
+                                pcall(function()
+                                    local try = getDisplayName(name, t)
+                                    if try and try ~= "" then resolved = try end
+                                end)
+                                if resolved and resolved ~= "" then break end
+                            end
+                        end
+                        if resolved and resolved ~= "" then
+                            activeLabel.Text = resolved
+                        end
+                    end)
+                end)
+
+                break
+            end
+        end
+    end
+end)
 
 _G.ShurikenAntiKick = false
 _G.AutoSitBlobZ = false
@@ -258,7 +460,7 @@ local function StartPacketLagDetector()
                 local SizeRounded = math.round(GetSizeMB(StringLen) * 1000) / 1000
                 
                 Library:Notify({
-                    Title = "Resonanse",
+                    Title = "Ekonans",
                     Description = "PACKET LAG DETECTED\nSource: " .. tostring(arg1):sub(1, 20) .. "\nSize: " .. tostring(SizeRounded) .. " MB",
                     Duration = 5
                 })
@@ -1730,23 +1932,6 @@ end
 
 -- GUI
 
--- MAIN TAB
-local MainLeftGroupbox = Tabs.Main:AddLeftGroupbox("Greetings")
-MainLeftGroupbox:AddLabel("Welcome to Resonans")
-MainLeftGroupbox:AddLabel("Profile, statistics")
-MainLeftGroupbox:AddDivider()
-MainLeftGroupbox:AddLabel("Version: v2.7")
-MainLeftGroupbox:AddLabel("Status: Online")
-
-local MainRightGroupbox = Tabs.Main:AddRightGroupbox("Statistics")
-MainRightGroupbox:AddLabel("Current time: " .. os.date("%H:%M"))
-MainRightGroupbox:AddLabel("Current script version: v2.7")
-MainRightGroupbox:AddLabel("Toggles currently on: 12")
-MainRightGroupbox:AddDivider()
-MainRightGroupbox:AddLabel("Game name: Fling Things and People")
-MainRightGroupbox:AddLabel("Elapsed time: 15 seconds")
-MainRightGroupbox:AddLabel("Kicked players: 0")
-
 -- DEF
 local LeftGroupBox = Tabs.Defence:AddLeftGroupbox("Anti Functions")
 local RightGroupBox = Tabs.Defence:AddRightGroupbox("Extra Defense")
@@ -2808,7 +2993,7 @@ TargetExtra:AddToggle("TargetNotifyToggle", {
             local target = Players:FindFirstChild(targetName)
             if target then
                 Library:Notify({
-                    Title = "Resonanse",
+                    Title = "Ekonans",
                     Description = target.DisplayName .. " (" .. target.Name .. ") is currently in game",
                     Duration = 3
                 })
@@ -2817,7 +3002,7 @@ TargetExtra:AddToggle("TargetNotifyToggle", {
             targetNotifyConnections["Added"] = Players.PlayerAdded:Connect(function(player)
                 if player.Name == Options.TargetPlayer.Value then
                     Library:Notify({
-                        Title = "Resonanse",
+                        Title = "Ekonans",
                         Description = player.DisplayName .. " (" .. player.Name .. ") Joined",
                         Duration = 3
                     })
@@ -2827,7 +3012,7 @@ TargetExtra:AddToggle("TargetNotifyToggle", {
             targetNotifyConnections["Removing"] = Players.PlayerRemoving:Connect(function(player)
                 if player.Name == Options.TargetPlayer.Value then
                     Library:Notify({
-                        Title = "Resonanse",
+                        Title = "Ekonans",
                         Description = player.DisplayName .. " (" .. player.Name .. ") Left",
                         Duration = 3
                     })
@@ -3785,13 +3970,13 @@ VisualsLeft:AddToggle("KickNotifyToggle", {
                     local displayName = closestPlayer.DisplayName or "Unknown"
                     local realName = closestPlayer.Name or "Unknown"
                     Library:Notify({
-                        Title = "Resonanse",
+                        Title = "Ekonans",
                         Description = displayName .. " (" .. realName .. ") Got Kicked!",
                         Duration = 3
                     })
                 else
                     Library:Notify({
-                        Title = "Resonanse",
+                        Title = "Ekonans",
                         Description = "Someone Got Kicked!",
                         Duration = 3
                     })
@@ -3817,9 +4002,107 @@ VisualsLeft:AddToggle("PacketLagNotifyToggle", {
     end
 })
 
+-- SERVER TAB 
+local ServerLeft = Tabs.Server:AddLeftGroupbox("Server Lag")
 
+ServerLeft:AddToggle("ServerLagLineToggle", {
+    Text = "Server Lag Line",
+    Default = false,
+    Callback = function(Value)
+        lagLineActive = Value
+        local intensity = Options.LagLineIntensity.Value or 150
+        if Value then
+            lagLineTask = task.spawn(function()
+                ServerLagLineFunction(intensity)
+            end)
+        else
+            if lagLineTask then
+                task.cancel(lagLineTask)
+                lagLineTask = nil
+            end
+        end
+    end
+})
 
+ServerLeft:AddSlider("LagLineIntensity", {
+    Text = "Lag Line Intensity",
+    Default = 150,
+    Min = 1,
+    Max = 1000,
+    Rounding = 0,
+    Callback = function(Value)
+        if lagLineActive then
+            lagLineActive = false
+            task.wait(0.1)
+            lagLineActive = true
+            lagLineTask = task.spawn(function()
+                ServerLagLineFunction(Value)
+            end)
+        end
+    end
+})
 
+ServerLeft:AddToggle("PacketLagToggle", {
+    Text = "Packet Lag",
+    Default = false,
+    Callback = function(Value)
+        packetLagActive = Value
+        if Value then
+            local strength = Options.PacketLagStrength.Value
+            packetLagTask = task.spawn(function()
+                local GrabEvents = game.ReplicatedStorage.GrabEvents
+                local ExtendGrabLine = GrabEvents.ExtendGrabLine
+                while packetLagActive do
+                    task.wait(1)
+                    ExtendGrabLine:FireServer(string.rep("😂😂😂😂🤣🤣🤣🤣", 100 * strength))
+                end
+            end)
+        else
+            if packetLagTask then
+                task.cancel(packetLagTask)
+                packetLagTask = nil
+            end
+        end
+    end
+})
+
+ServerLeft:AddSlider("PacketLagStrength", {
+    Text = "Packet Lag Strength",
+    Default = 6250,
+    Min = 0,
+    Max = 6250,
+    Rounding = 1,
+    Callback = function(Value)
+    end
+})
+
+-- FUN 
+local FunLeft = Tabs.Fun:AddLeftGroupbox("Fun Stuff")
+
+--  Jerk Off 
+FunLeft:AddToggle("JerkOffToggle", {
+    Text = "Jerk Off",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            StartJerkOff()
+        else
+            StopJerkOff()
+        end
+    end
+})
+
+FunLeft:AddLabel("Jerk Off Key"):AddKeyPicker("JerkOffKeyPicker", {
+    Default = "Q",
+    Mode = "Press",
+    Text = "Jerk Off Key",
+    NoUI = false,
+    Callback = function(Value)
+    end,
+    ChangedCallback = function(NewKey)
+        jerkOffKey = NewKey
+    end
+})
 
 -- MISC 
 local MiscLeft = Tabs.Miscs:AddLeftGroupbox("Miscellaneous")
@@ -3895,6 +4178,14 @@ MiscAura:AddToggle("AuraWhitelistToggle", {
 })
 
 -- CREDITS 
+local CreditsLeft = Tabs.Credits:AddLeftGroupbox("Credits")
+
+CreditsLeft:AddLabel("Ekonans", true)
+CreditsLeft:AddLabel("Creator: magfun_legend", true)
+CreditsLeft:AddLabel("============================")
+CreditsLeft:AddLabel("Helper & Tester: dreamqqbb", true)
+CreditsLeft:AddLabel("Discord: imdreamqqb", true)
+
 -- UI SETTINGS 
 local MenuGroup = Tabs.UISettings:AddLeftGroupbox("Menu")
 
@@ -3924,8 +4215,8 @@ MenuGroup:AddDropdown("NotificationSide", {
 })
 
 MenuGroup:AddDropdown("DPIDropdown", {
-    Values = { "50%", "75%", "100%", "120%", "125%", "150%", "175%", "200%" },
-    Default = "120%",
+    Values = { "50%", "75%", "100%", "125%", "150%", "175%", "200%" },
+    Default = "100%",
     Text = "DPI Scale",
     Callback = function(Value)
         Value = Value:gsub("%%", "")
@@ -3957,9 +4248,17 @@ ThemeManager:SetLibrary(Library)
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
-ThemeManager:SetFolder("Resonanse")
-SaveManager:SetFolder("Resonanse/FlingThings")
+ThemeManager:SetFolder("Ekonans")
+SaveManager:SetFolder("Ekonans/FlingThings")
 SaveManager:SetSubFolder("game-config")
+-- Apply user's preferred default theme
+ThemeManager:SetDefaultTheme({
+    FontColor = Color3.fromRGB(255, 255, 255),
+    MainColor = Color3.fromRGB(0, 0, 0),
+    AccentColor = Color3.fromRGB(255, 0, 0), -- brightest red
+    BackgroundColor = Color3.fromRGB(0, 0, 0),
+    OutlineColor = Color3.fromRGB(0, 0, 0),
+})
 
 ThemeManager:ApplyToTab(Tabs.UISettings)
 SaveManager:BuildConfigSection(Tabs.UISettings)
@@ -3997,10 +4296,10 @@ Players.PlayerRemoving:Connect(function()
 end)
 
 Library:Notify({
-    Title = "Resonanse",
+    Title = "Ekonans",
     Description = "Script loaded successfully",
     Duration = 5
 })
 
 SaveManager:LoadAutoloadConfig()
-print("Rezonans Crack 23132 by:magfun legend")
+print("Ekonans ready")
